@@ -1,3 +1,7 @@
+/***************************************************************\
+  A library that provides simple functions to support filtering
+\***************************************************************/
+
 #include "lib.h"
 #include <stdlib.h>
 #include <linux/ip.h>
