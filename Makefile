@@ -7,7 +7,7 @@ lib.o: lib.h lib.c
 	gcc -c lib.c
 
 clean:
-	rm -f *.o write read filter
+	rm -f *.o filter
 
 push: clean
 	git add ./
