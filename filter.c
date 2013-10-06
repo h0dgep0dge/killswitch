@@ -50,9 +50,9 @@ int main() {
 		int l,i;
 		l = ipq_read(h,buff,2000,500000);
 		if(l <= 0) continue; // err/timeout, doesn't give enough info yet. FIXME
-		if(time(NULL) > configured+CONF_TIMEOUT) {
-			configured = time(NULL);
-			if((def = read_policies("./filter.conf",pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
+		if(get_lwrite(conf_file) > configured) {
+			configured = get_lwrite(conf_file);
+			if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
 		}
 		pkt = ipq_get_packet(buff);
 		if(ipq_set_verdict(h,pkt->packet_id,get_policy(pkt->hw_addr,pol,def),0,NULL) < 0) {
