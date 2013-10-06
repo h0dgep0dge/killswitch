@@ -17,5 +17,5 @@ clean:
 
 push: clean
 	git add *
-	git commit -m "Commit from Makefile"
+	git commit --allow-empty-message
 	git push origin master
