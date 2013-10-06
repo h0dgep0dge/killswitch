@@ -2,7 +2,7 @@
 *  An ip_queue example program         *
 *  Filters IPv4 Packets on HW Address  *
 *  By Robbie Mckennie                  *
-\**************************************/
+**************************************/
 
 #include <stdlib.h>
 #include <linux/ip.h>
