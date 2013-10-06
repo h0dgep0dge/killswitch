@@ -1,3 +1,7 @@
+/***************************************************************************\
+  Headers for a library that provides simple functions to support filtering
+\***************************************************************************/
+
 #include <stdlib.h>
 
 struct addr_policy {
