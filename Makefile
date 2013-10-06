@@ -14,3 +14,8 @@ lib.o: lib.h lib.c
 
 clean:
 	rm -f *.o write read filter
+
+push:
+	git add *
+	git commit -m "Commit from Makefile"
+	git push origin master
