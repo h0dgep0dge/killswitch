@@ -1,10 +1,4 @@
-all: write read filter
-
-write: write_pol.c lib.o
-	gcc -o write write_pol.c lib.o
-
-read: read_pol.c lib.o
-	gcc -o read read_pol.c lib.o
+all: filter
 
 filter: filter.c lib.o
 	gcc -o filter -lipq filter.c lib.o
