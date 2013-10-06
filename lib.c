@@ -24,7 +24,8 @@ int read_policies(const char *filename,struct addr_policy **policies,size_t pol_
 		unsigned int mac[6];
 		unsigned char mac_c[6];
 		int pol;
-		if(sscanf(buff,"default=%d",&def) > 0);
+		if(buff[0] == '#');
+		else if(sscanf(buff,"default=%d",&def) > 0);
 		else if((r = sscanf(buff,"client={%x:%x:%x:%x:%x:%x,%d}",mac,mac+1,mac+2,mac+3,mac+4,mac+5,&pol)) > 0) {
 			if(r != 7) fprintf(stderr,"Malformed client on line %i \n",line);
 			else if(p_offset < pol_len-1) {
