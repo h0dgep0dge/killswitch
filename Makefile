@@ -1,7 +1,7 @@
-all: filter
+all: filter test
 
-test: netfilter.c
-	gcc -o test netfilter.c -lnfnetlink -lnetfilter_queue
+test: netfilter.c lib.o
+	gcc -o test -lnfnetlink -lnetfilter_queue netfilter.c lib.o
 
 filter: filter.c lib.o
 	gcc -o filter -lipq filter.c lib.o

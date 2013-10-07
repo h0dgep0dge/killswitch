@@ -5,6 +5,12 @@
 #include "lib.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <error.h>
+#include <errno.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 unsigned int get_policy(void *addr,struct addr_policy **policies,unsigned int def) {
 	int i;
@@ -46,4 +52,10 @@ int read_policies(const char *filename,struct addr_policy **policies,size_t pol_
 	}
 	fclose(strm);
 	return def;
+}
+
+time_t get_lwrite(char *filename) {
+	struct stat info;
+	if(stat(filename,&info) < 0) error(1,errno,"stat");
+	return info.st_mtime;
 }

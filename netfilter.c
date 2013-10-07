@@ -7,9 +7,14 @@
 #include <libnetfilter_queue/libnetfilter_queue.h>
 #include <error.h>
 #include <errno.h>
+#include "lib.h"
+
+#define ADDR_SIZE 1000
 
 int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data);
 u_int32_t print_pkt (struct nfq_data *tb);
+
+int def;
 
 int main() {
 	struct nfq_handle *h;
@@ -17,17 +22,25 @@ int main() {
 	struct nfnl_handle *nh;
 	int fd;
 	int rv;
-	char buf[4096] __attribute__ ((aligned));
+	char buf[4096];
+	
+	struct addr_policy *pol[ADDR_SIZE];
+	char *conf_file = "./filter.conf";
+	int configured = get_lwrite(conf_file);
+	if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
 
 	if((h = nfq_open()) == NULL) error(1,errno,"nfq_open");
 	if (nfq_unbind_pf(h,AF_INET) < 0) error(1,errno,"nfq_unbind_pf");
 	if (nfq_bind_pf(h,AF_INET) < 0) error(1,errno,"nfq_bind_pf");
 	
-	if((qh = nfq_create_queue(h,  0, &cb, NULL)) == NULL) error(1,errno,"nfq_create_queue");
+	if((qh = nfq_create_queue(h,  0, &cb, pol)) == NULL) error(1,errno,"nfq_create_queue");
 	if(nfq_set_mode(qh, NFQNL_COPY_PACKET, 0xffff) < 0) error(1,errno,"nfq_set_mode");
 	fd = nfq_fd(h);
 	while ((rv = recv(fd, buf, sizeof(buf), 0)) && rv >= 0) {
-		printf("pkt received\n");
+		if(get_lwrite(conf_file) > configured) {
+			configured = get_lwrite(conf_file);
+			if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
+		}
 		nfq_handle_packet(h, buf, rv);
 	}
 	if(nfq_close(h) < 0) error(1,errno,"nfq_close");
@@ -35,8 +48,17 @@ int main() {
 }
 
 int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data) {
-	u_int32_t id = print_pkt(nfa);
-	printf("entering callback\n");
+	struct nfqnl_msg_packet_hw *hwph;
+	struct nfqnl_msg_packet_hdr *ph;
+	
+	int id = 0;
+	// u_int32_t id = print_pkt(nfa);
+	if (ph = nfq_get_msg_packet_hdr(nfa)) id = ntohl(ph->packet_id);
+	
+	if (hwph = nfq_get_packet_hw(nfa)) {
+		// int hlen = ntohs(hwph->hw_addrlen);
+		return nfq_set_verdict(qh, id, get_policy(hwph->hw_addr,(struct addr_policy **)data,def), 0, NULL);
+	}
 	return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
 }
 

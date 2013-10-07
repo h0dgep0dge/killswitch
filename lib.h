@@ -11,3 +11,4 @@ struct addr_policy {
 
 unsigned int get_policy(void *addr,struct addr_policy **policies,unsigned int def);
 int read_policies(const char *filename,struct addr_policy **policies,size_t pol_len);
+time_t get_lwrite(char *filename);

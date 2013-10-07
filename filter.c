@@ -72,9 +72,3 @@ void handler() {
 	printf("QUITTING \n");
 	run = 0;
 }
-
-time_t get_lwrite(char *filename) {
-	struct stat info;
-	if(stat(filename,&info) < 0) error(1,errno,"stat");
-	return info.st_mtime;
-}
