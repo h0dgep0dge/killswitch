@@ -18,3 +18,9 @@ int main() {
 	if (nfq_close(h) < 0) error(1,errno,"nfq_close");
 	return 0;
 }
+
+static int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data) {
+	u_int32_t id = print_pkt(nfa);
+	printf("entering callback\n");
+	return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
+}
