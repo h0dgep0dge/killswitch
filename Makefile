@@ -16,4 +16,3 @@ push: clean
 	git add ./
 	git commit --allow-empty-message -m "${MSG}"
 	git push origin master
-
