@@ -12,7 +12,7 @@
 #define ADDR_SIZE 1000
 
 int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data);
-u_int32_t print_pkt (struct nfq_data *tb);
+// u_int32_t print_pkt (struct nfq_data *tb);
 
 int def;
 
@@ -50,10 +50,13 @@ int main() {
 int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data) {
 	struct nfqnl_msg_packet_hw *hwph;
 	struct nfqnl_msg_packet_hdr *ph;
-	
+	unsigned char *buff[1];
+	unsigned char addr[4] = {8,8,8,8};
 	int id = 0;
 	// u_int32_t id = print_pkt(nfa);
 	if (ph = nfq_get_msg_packet_hdr(nfa)) id = ntohl(ph->packet_id);
+	
+	if(nfq_get_payload(nfa,buff) >= 0) if(memcmp(buff[0]+16,addr,4) == 0) return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
 	
 	if (hwph = nfq_get_packet_hw(nfa)) {
 		// int hlen = ntohs(hwph->hw_addrlen);
@@ -62,47 +65,47 @@ int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void 
 	return nfq_set_verdict(qh, id, NF_ACCEPT, 0, NULL);
 }
 
-u_int32_t print_pkt (struct nfq_data *tb) {
-	int id = 0;
-	struct nfqnl_msg_packet_hdr *ph;
-	struct nfqnl_msg_packet_hw *hwph;
-	u_int32_t mark,ifi; 
-	int ret;
-	unsigned char *data;
+// u_int32_t print_pkt (struct nfq_data *tb) {
+	// int id = 0;
+	// struct nfqnl_msg_packet_hdr *ph;
+	// struct nfqnl_msg_packet_hw *hwph;
+	// u_int32_t mark,ifi; 
+	// int ret;
+	// unsigned char *data;
 
-	ph = nfq_get_msg_packet_hdr(tb);
-	if (ph) {
-		id = ntohl(ph->packet_id);
-		printf("hw_protocol=0x%04x hook=%u id=%u ",ntohs(ph->hw_protocol), ph->hook, id);
-	}
+	// ph = nfq_get_msg_packet_hdr(tb);
+	// if (ph) {
+		// id = ntohl(ph->packet_id);
+		// printf("hw_protocol=0x%04x hook=%u id=%u ",ntohs(ph->hw_protocol), ph->hook, id);
+	// }
 
-	hwph = nfq_get_packet_hw(tb);
-	if (hwph) {
-		int i, hlen = ntohs(hwph->hw_addrlen);
-		printf("hw_src_addr=");
-		for (i = 0; i < hlen-1; i++) printf("%02x:", hwph->hw_addr[i]);
-		printf("%02x ", hwph->hw_addr[hlen-1]);
-	}
+	// hwph = nfq_get_packet_hw(tb);
+	// if (hwph) {
+		// int i, hlen = ntohs(hwph->hw_addrlen);
+		// printf("hw_src_addr=");
+		// for (i = 0; i < hlen-1; i++) printf("%02x:", hwph->hw_addr[i]);
+		// printf("%02x ", hwph->hw_addr[hlen-1]);
+	// }
 
-	mark = nfq_get_nfmark(tb);
-	if (mark) printf("mark=%u ", mark);
+	// mark = nfq_get_nfmark(tb);
+	// if (mark) printf("mark=%u ", mark);
 
-	ifi = nfq_get_indev(tb);
-	if (ifi) printf("indev=%u ", ifi);
+	// ifi = nfq_get_indev(tb);
+	// if (ifi) printf("indev=%u ", ifi);
 
-	ifi = nfq_get_outdev(tb);
-	if (ifi) printf("outdev=%u ", ifi);
+	// ifi = nfq_get_outdev(tb);
+	// if (ifi) printf("outdev=%u ", ifi);
 
-	ifi = nfq_get_physindev(tb);
-	if (ifi) printf("physindev=%u ", ifi);
+	// ifi = nfq_get_physindev(tb);
+	// if (ifi) printf("physindev=%u ", ifi);
 
-	ifi = nfq_get_physoutdev(tb);
-	if (ifi) printf("physoutdev=%u ", ifi);
+	// ifi = nfq_get_physoutdev(tb);
+	// if (ifi) printf("physoutdev=%u ", ifi);
 
-	ret = nfq_get_payload(tb, &data);
-	if (ret >= 0) printf("payload_len=%d ", ret);
+	// ret = nfq_get_payload(tb, &data);
+	// if (ret >= 0) printf("payload_len=%d ", ret);
 
-	fputc('\n', stdout);
+	// fputc('\n', stdout);
 
-	return id;
-}
+	// return id;
+// }
