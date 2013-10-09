@@ -1,4 +1,4 @@
-all: clean filter nfqueue getmac
+all: filter nfqueue getmac
 
 nfqueue: netfilter.c lib.o
 	gcc -o nfqueue -lnfnetlink -lnetfilter_queue netfilter.c lib.o
