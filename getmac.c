@@ -16,7 +16,7 @@ int main() {
 	int sock,l,addrl;
 	struct sockaddr_in bind_addr;
 	struct sockaddr_in *p;
-	struct sockaddr_in cli_addr;
+	struct sockaddr cli_addr;
 	struct sockaddr_in netmask;
 	struct arpreq request;
 	char buff[0xffff];
@@ -33,18 +33,19 @@ int main() {
 	inet_aton("255.255.255.255",&(netmask.sin_addr));
 	if(bind(sock,(struct sockaddr *)(&bind_addr),sizeof(struct sockaddr_in)) < 0) error(1,errno,"socket");
 	
-	while((l = recvfrom(sock,buff,0xffff,0,(struct sockaddr *)&cli_addr,&addrl)) >= 0) {
+	while((l = recvfrom(sock,buff,0xffff,0,&cli_addr,&addrl)) >= 0) {
 		int r;
 		memset(&request,0,sizeof(struct arpreq));
 		// memcpy(&(request.arp_pa),&cli_addr,sizeof(struct sockaddr));
-		// p = (struct sockaddr_in *)&(request.arp_pa);
+		p = (struct sockaddr_in *)&(request.arp_pa);
 		// p->sin_family = AF_INET;
 		// p->sin_addr.s_addr = cli_addr.sin_addr.s_addr;
 		// memcpy(&(request.arp_netmask),&netmask,sizeof(struct sockaddr));
 		// strcpy(request.arp_dev,"eth0");
 		// r = ioctl(sock,SIOCGARP,&request);
 		// if(() != 100) error(1,errno,"Ioctl");
-		printf("%s %i \n",inet_ntoa(cli_addr.sin_addr),r);
+		printf("%s %i \n",inet_ntoa(((struct sockaddr_in *)(&cli_addr))->sin_addr),r);
 	}
+	error(1,errno,"Recv");
 	return 0;
 }
