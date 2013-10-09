@@ -1,16 +1,19 @@
-all: filter test
+all: clean filter nfqueue getmac
 
-test: netfilter.c lib.o
-	gcc -o test -lnfnetlink -lnetfilter_queue netfilter.c lib.o
+nfqueue: netfilter.c lib.o
+	gcc -o nfqueue -lnfnetlink -lnetfilter_queue netfilter.c lib.o
 
 filter: filter.c lib.o
 	gcc -o filter -lipq filter.c lib.o
+
+getmac: getmac.c
+	gcc -o getmac getmac.c
 
 lib.o: lib.h lib.c
 	gcc -c lib.c
 
 clean:
-	rm -f *.o filter test
+	rm -f *.o filter test nfqueue getmac
 
 push: clean
 	git commit -a --allow-empty-message -m "${MSG}"
