@@ -1,4 +1,4 @@
-all: filter nfqueue getmac
+all: filter nfqueue getmac getconf
 
 nfqueue: netfilter.c lib.o
 	gcc -o nfqueue -lnfnetlink -lnetfilter_queue netfilter.c lib.o
@@ -8,6 +8,9 @@ filter: filter.c lib.o
 
 getmac: getmac.c
 	gcc -o getmac getmac.c
+
+getconf: getconf.c
+	gcc -o getconf getconf.c
 
 lib.o: lib.h lib.c
 	gcc -c lib.c
