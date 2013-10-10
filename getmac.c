@@ -41,7 +41,10 @@ int main() {
 		memcpy(&(request.arp_pa),&cli_addr,sizeof(struct sockaddr));
 		memcpy(&(request.arp_netmask),&netmask,sizeof(struct sockaddr));
 		strcpy(request.arp_dev,"eth0");
-		if(ioctl(sock,SIOCGARP,&request) < 0) error(1,errno,"Ioctl");
+		if(ioctl(sock,SIOCGARP,&request) < 0) {
+			if(errno == 22) sendto(sock,"BADMAC",6,0,(struct sockaddr *)&cli_addr,addrl);
+			else error(1,errno,"Ioctl");
+		}
 		// printf("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x \n",(unsigned char)request.arp_ha.sa_data[0],(unsigned char)request.arp_ha.sa_data[1],
 												  // (unsigned char)request.arp_ha.sa_data[2],(unsigned char)request.arp_ha.sa_data[3],
 												  // (unsigned char)request.arp_ha.sa_data[4],(unsigned char)request.arp_ha.sa_data[5]);
