@@ -12,11 +12,14 @@ getmac: getmac.c
 getconf: getconf.c
 	gcc -o getconf getconf.c
 
+cli_getmac: cli_getmac.c lib.o
+	gcc -o cli_getmac cli_getmac.c lib.o
+
 lib.o: lib.h lib.c
 	gcc -c lib.c
 
 clean:
-	rm -f *.o filter test nfqueue getmac
+	rm -f *.o filter test nfqueue getmac getconf
 
 push: clean
 	git commit -a --allow-empty-message -m "${MSG}"

@@ -1,6 +1,5 @@
-#include <stdio.h>#include <sys/types.h>#include <sys/socket.h>#include <error.h>#include <errno.h>
-
+#include <stdio.h>#include <sys/types.h>#include <sys/socket.h>#include <netinet/in.h>#include <error.h>#include <errno.h>#include <string.h>#include <unistd.h>
+int io_client(int sockfd,struct sockaddr_in *addr);
 int main() {
-	int sock;	struct sockaddr_in bind_addr;	char buff[0xfff];		if((sock = socket(AF_INET,SOCK_STREAM,0)) < 0) error(1,errno,"socket");		memset(&bind_addr,0,sizeof(struct sockaddr_in));	bind_addr.sin_family = AF_INET;	bind_addr.sin_port = htons(1500);	bind_addr.sin_addr.s_addr = INADDR_ANY;		if(bind(sock,(struct sockaddr *)&bind_addr,sizeof(struct sockaddr_in)) < 0) error(1,errno,"bind");
-	return 0;
-}
+	int sock,client;	struct sockaddr_in bind_addr;	struct sockaddr_in client_addr;	int client_l;	char buff[0xfff];		if((sock = socket(AF_INET,SOCK_STREAM,0)) < 0) error(1,errno,"socket");		memset(&bind_addr,0,sizeof(struct sockaddr_in));	bind_addr.sin_family = AF_INET;	bind_addr.sin_port = htons(1500);	bind_addr.sin_addr.s_addr = INADDR_ANY;		if(bind(sock,(struct sockaddr *)&bind_addr,sizeof(struct sockaddr_in)) < 0) error(1,errno,"bind");	if(listen(sock,50) < 0) error(1,errno,"bind");		client_l = sizeof(struct sockaddr_in);		while((client = accept(sock,(struct sockaddr *)&client_addr,&client_l)) >= 0) {		int r;		if((r = fork()) < 0) error(0,errno,"fork");		if(r == 0) {			io_client(client,&client_addr);			return 0;		}		client_l = sizeof(struct sockaddr_in);	}	if(client < 0) error(1,errno,"accept");	return 0;
+}int io_client(int sockfd,struct sockaddr_in *addr) {	write(sockfd,"HELLO\n",6);	if(close(sockfd) < 0) error(0,errno,"close");	return 0;}

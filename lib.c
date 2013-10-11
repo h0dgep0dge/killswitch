@@ -59,3 +59,8 @@ time_t get_lwrite(char *filename) {
 	if(stat(filename,&info) < 0) error(1,errno,"stat");
 	return info.st_mtime;
 }
+
+void err(char *messg,int status) {
+	printf("%s \n",messg);
+	if(status > 0) exit(status);
+}
