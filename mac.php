@@ -1,3 +1,4 @@
-<?php
-header("Location: /test.php?mac=".exec("./cli_getmac ".$_SERVER['REMOTE_ADDR']));
-?>
+function get_mac() {
+    return "<?php echo exec("./cli_getmac ".$_SERVER['REMOTE_ADDR']) ?>";
+}
+

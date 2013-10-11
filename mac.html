@@ -1,0 +1,13 @@
+<html>
+<head>
+<script src="http://192.168.1.68/mac.php" language="javascript"></script>
+<script language="javascript">
+function put_mac() {
+	document.getElementById('macaddr').value = get_mac();
+}
+</script>
+</head>
+<body onLoad="put_mac()">
+<input type="text" id="macaddr" />
+</body>
+</html>
