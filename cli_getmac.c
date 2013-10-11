@@ -22,11 +22,16 @@ int main(int argc,char **argv) {
 	sock = socket(AF_INET,SOCK_DGRAM,0);
 	memset(&request,0,sizeof(struct arpreq));
 	memcpy(&(request.arp_pa),&target,sizeof(struct sockaddr));
-	memcpy(&(request.arp_netmask),&netmask,sizeof(struct sockaddr));
 	strcpy(request.arp_dev,"eth0");
-	if(ioctl(sock,SIOCGARP,&request) < 0) error(1,errno,"Ioctl");
-	printf("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x \n",(unsigned char)request.arp_ha.sa_data[0],(unsigned char)request.arp_ha.sa_data[1],
-											  (unsigned char)request.arp_ha.sa_data[2],(unsigned char)request.arp_ha.sa_data[3],
-											  (unsigned char)request.arp_ha.sa_data[4],(unsigned char)request.arp_ha.sa_data[5]);
+	if(ioctl(sock,SIOCGARP,&request) < 0) {
+		if(errno == 6) {
+			printf("ERROR\n");
+			return 1;
+		}
+		error(1,errno,"Ioctl %i",errno);
+	}
+	printf("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",(unsigned char)request.arp_ha.sa_data[0],(unsigned char)request.arp_ha.sa_data[1],
+											 (unsigned char)request.arp_ha.sa_data[2],(unsigned char)request.arp_ha.sa_data[3],
+											 (unsigned char)request.arp_ha.sa_data[4],(unsigned char)request.arp_ha.sa_data[5]);
 	return 0;
 }
