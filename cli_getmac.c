@@ -12,12 +12,8 @@
 int main(int argc,char **argv) {
 	struct arpreq request;
 	int sock;
-	struct sockaddr_in netmask,target;
+	struct sockaddr_in target;
 	if(argc != 2) err("Wrong argument",1);
-	
-	memset(&netmask,0,sizeof(struct sockaddr_in));
-	netmask.sin_family = AF_INET;
-	inet_aton("255.255.255.255",&(netmask.sin_addr));
 	
 	memset(&target,0,sizeof(struct sockaddr_in));
 	target.sin_family = AF_INET;
