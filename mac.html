@@ -1,13 +1,18 @@
 <html>
 <head>
-<script src="http://192.168.1.68/mac.php" language="javascript"></script>
 <script language="javascript">
-function put_mac() {
-	document.getElementById('macaddr').value = get_mac();
+var loaded = 0;
+function set_mac() {
+	if(loaded == 1) {
+		document.getElementById('macaddr').value = mac;
+	} else {
+		document.getElementById('macaddr').value = "ERROR";
+	}
 }
 </script>
+<script src="http://192.168.0.1/mac.js" language="javascript"></script>
 </head>
-<body onLoad="put_mac()">
-<input type="text" id="macaddr" />
+<body onLoad="set_mac()">
+<input type="text" id="macaddr" onClick="alert(loaded)" />
 </body>
 </html>
