@@ -1,3 +1,7 @@
+/********************************************************\
+* A basic command line tool to easily find a mac address *
+\********************************************************/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
