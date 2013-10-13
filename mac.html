@@ -4,15 +4,25 @@
 var loaded = 0;
 function set_mac() {
 	if(loaded == 1) {
-		document.getElementById('macaddr').value = mac;
+		if(mac == "ERROR") {
+			document.getElementById('macaddr').value = "An error has occured 1";
+			document.getElementById('humanname').disabled = true;
+			document.getElementById('submitbutton').disabled = true;
+		} else {
+			document.getElementById('macaddr').value = mac;
+		}
 	} else {
-		document.getElementById('macaddr').value = "ERROR";
+		document.getElementById('macaddr').value = "An error has occured 2";
 	}
 }
 </script>
-<script src="http://192.168.0.1/mac.js" language="javascript"></script>
+<script src="/mac.php" language="javascript"></script>
 </head>
 <body onLoad="set_mac()">
-<input type="text" id="macaddr" onClick="alert(loaded)" />
+<form action="register.php" method="post" id="registerform">
+Mac Address: <input type="text" id="macaddr" name="addr" disabled /><br />
+Human readable name: <input type="text" id="humanname" name="name" value="Robbie" disabled /><br />
+<input type="submit" id="submitbutton" value="Register" />
+</form>
 </body>
 </html>
