@@ -1,4 +1,4 @@
-all: filter nfqueue getmac getconf cli_getmac
+all: filter nfqueue getmac getconf cli_getmac cli_config
 
 nfqueue: netfilter.c lib.o
 	gcc -o nfqueue -lnfnetlink -lnetfilter_queue netfilter.c lib.o
@@ -15,11 +15,14 @@ getconf: getconf.c
 cli_getmac: cli_getmac.c lib.o
 	gcc -o cli_getmac cli_getmac.c lib.o
 
+cli_config: cli_config.c
+	gcc -o cli_config $(mysql_config --cflags) cli_config.c $(mysql_config --libs)
+
 lib.o: lib.h lib.c
 	gcc -c lib.c
 
 clean:
-	rm -f *.o filter test nfqueue getmac getconf cli_getmac
+	rm -f *.o filter test nfqueue getmac getconf cli_getmac cli_config
 
 push: clean
 	git commit -a --allow-empty-message -m "${MSG}"
