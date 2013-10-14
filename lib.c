@@ -60,7 +60,7 @@ time_t get_lwrite(char *filename) {
 	return info.st_mtime;
 }
 
-void err(char *messg,int status) {
-	printf("%s \n",messg);
+void err(const char *messg,int status) {
+	fprintf(stderr,"%s \n",messg);
 	if(status > 0) exit(status);
 }
