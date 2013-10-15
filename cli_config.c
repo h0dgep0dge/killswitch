@@ -35,6 +35,7 @@ int main() {
 			return 0;
 		}
 		else if(r < 0) error(1,errno,"fork");
+		close(c_sock);
 	}
 	return 0;
 	if (mysql_query(conn, "SELECT * FROM `policies`")) err(mysql_error(conn),1);
@@ -63,8 +64,15 @@ int create_sock(int type,unsigned short port,int backlog) {
 }
 
 int handle_client(int sock) {
-	printf("Got client! \n");
-	write(sock,"BUHBYE",6);
-	close(sock);
+	FILE *sock_str;
+	char buf[50];
+	int owner;
+	sock_str = fdopen(sock,"w+");
+	
+	fgets(buf,50,sock_str);
+	owner = atoi(buf);
+	fprintf(sock_str,"%i \n",owner*2);
+	fprintf(sock_str,"BUHBYE\n");
+	fclose(sock_str);
 	return 0;
 }
