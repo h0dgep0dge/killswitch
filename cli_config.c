@@ -66,13 +66,17 @@ int create_sock(int type,unsigned short port,int backlog) {
 int handle_client(int sock) {
 	FILE *sock_str;
 	char buf[50];
-	int owner;
+	int owner,i;
 	sock_str = fdopen(sock,"w+");
 	
 	fgets(buf,50,sock_str);
+	for(i = 0;i < 50 && buf[i] != '\0';i++) if(!isspace(buf[i]) && !isdigit(buf[i])) {
+		fprintf(sock_str,"BROKEN INPUT\n");
+		fclose(sock_str);
+		return -1;
+	}
 	owner = atoi(buf);
-	fprintf(sock_str,"%i \n",owner*2);
-	fprintf(sock_str,"BUHBYE\n");
+	fprintf(sock_str,"%i \n",owner);
 	fclose(sock_str);
 	return 0;
 }
