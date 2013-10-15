@@ -74,8 +74,12 @@ int handle_client(int sock) {
 	if (mysql_query(conn,q)) err(mysql_error(conn),1);
 	res = mysql_use_result(conn);
 	
-	while ((row = mysql_fetch_row(res)) != NULL) fprintf(sock_str,"client={%s,%s} \n",row[2],row[3]);
-
+	
+	while ((row = mysql_fetch_row(res)) != NULL) {
+		if(strcmp(row[2],"00:00:00:00:00:00") == 0) fprintf(sock_str,"default=%s \n",row[3]);
+		else fprintf(sock_str,"client={%s,%s} \n",row[2],row[3]);
+	}
+	
 	mysql_free_result(res);
 	mysql_close(conn);
 	fclose(sock_str);
