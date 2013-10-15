@@ -16,16 +16,8 @@ int create_sock(int type,unsigned short port,int backlog);
 int handle_client(int sock);
 
 int main() {
-	MYSQL *conn;
-	MYSQL_RES *res;
-	MYSQL_ROW row;
-	char *server = "localhost";
-	char *database = "killswitch";
 	int sock,c_sock;
 	struct sockaddr_in bind_addr;
-	conn = mysql_init(NULL);
-	if(conn == NULL) err("Failed to create conn",1);
-	if (!mysql_real_connect(conn,server,user,password,database,0,NULL,0)) err(mysql_error(conn),1);
 	
 	if((sock = create_sock(SOCK_STREAM,81,10)) < 0) error(1,errno,"create_sock");
 	while((c_sock = accept(sock,NULL,NULL)) > 0) {
@@ -37,14 +29,6 @@ int main() {
 		else if(r < 0) error(1,errno,"fork");
 		close(c_sock);
 	}
-	return 0;
-	if (mysql_query(conn, "SELECT * FROM `policies`")) err(mysql_error(conn),1);
-	res = mysql_use_result(conn);
-	
-	while ((row = mysql_fetch_row(res)) != NULL) printf("client={%s,%s} \n",row[2],row[3]);
-
-	mysql_free_result(res);
-	mysql_close(conn);
 	return 0;
 }
 
@@ -64,8 +48,14 @@ int create_sock(int type,unsigned short port,int backlog) {
 }
 
 int handle_client(int sock) {
+	MYSQL *conn;
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+	char *server = "localhost";
+	char *database = "killswitch";
 	FILE *sock_str;
 	char buf[50];
+	char q[500];
 	int owner,i;
 	sock_str = fdopen(sock,"w+");
 	
@@ -75,8 +65,19 @@ int handle_client(int sock) {
 		fclose(sock_str);
 		return -1;
 	}
+	conn = mysql_init(NULL);
+	if(conn == NULL) err("Failed to create conn",1);
+	if (!mysql_real_connect(conn,server,user,password,database,0,NULL,0)) err(mysql_error(conn),1);
+	
 	owner = atoi(buf);
-	fprintf(sock_str,"%i \n",owner);
+	sprintf(q,"SELECT * FROM `policies` where `owner`='%i'",owner);
+	if (mysql_query(conn,q)) err(mysql_error(conn),1);
+	res = mysql_use_result(conn);
+	
+	while ((row = mysql_fetch_row(res)) != NULL) fprintf(sock_str,"client={%s,%s} \n",row[2],row[3]);
+
+	mysql_free_result(res);
+	mysql_close(conn);
 	fclose(sock_str);
 	return 0;
 }
