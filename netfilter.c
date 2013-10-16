@@ -35,14 +35,15 @@ int main() {
 	configured = get_time();
 	
 	if((h = nfq_open()) == NULL) error(1,errno,"nfq_open");
-	if (nfq_unbind_pf(h,AF_INET) < 0) error(1,errno,"nfq_unbind_pf");
-	if (nfq_bind_pf(h,AF_INET) < 0) error(1,errno,"nfq_bind_pf");
+	if(nfq_unbind_pf(h,AF_INET) < 0) error(1,errno,"nfq_unbind_pf");
+	if(nfq_bind_pf(h,AF_INET) < 0) error(1,errno,"nfq_bind_pf");
 	
 	if((qh = nfq_create_queue(h,  0, &cb, pol)) == NULL) error(1,errno,"nfq_create_queue");
 	if(nfq_set_mode(qh, NFQNL_COPY_PACKET, 0xffff) < 0) error(1,errno,"nfq_set_mode");
 	fd = nfq_fd(h);
 	while ((rv = recv(fd, buf, sizeof(buf), 0)) && rv >= 0) {
 		if(get_time()+(CONF_TIMEOUT*60) <= configured) {
+			printf("Reconfiguring\n");
 			if((def = read_net_policies(addr,81,OWNER,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
 			configured = get_time();
 		}
