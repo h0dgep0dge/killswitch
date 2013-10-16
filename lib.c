@@ -11,11 +11,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <error.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/time.h>
+#include <string.h>
 
 unsigned int get_policy(void *addr,struct addr_policy **policies,unsigned int def) {
 	int i;
@@ -59,7 +60,7 @@ int read_policies(const char *filename,struct addr_policy **policies,size_t pol_
 	return def;
 }
 
-int read_net_policies(const char *addr,unsigned short port,struct addr_policy **policies,size_t pol_len) {
+int read_net_policies(const char *addr,unsigned short port,unsigned int owner,struct addr_policy **policies,size_t pol_len) {
 	char buff[500];
 	FILE *strm;
 	int def = 0,r,overrun=0,i;
@@ -81,6 +82,7 @@ int read_net_policies(const char *addr,unsigned short port,struct addr_policy **
 	if(connect(sock,(struct sockaddr *)&bind_addr,sizeof(struct sockaddr_in)) < 0) return -1;
 	
 	if((strm = fdopen(sock,"r+")) == NULL) return -1;
+	fprintf(strm,"%i\n",owner);
 	while(fgets(buff,500,strm)) {
 		unsigned int mac[6];
 		unsigned char mac_c[6];
@@ -118,4 +120,11 @@ time_t get_lwrite(char *filename) {
 void err(const char *messg,int status) {
 	fprintf(stderr,"%s \n",messg);
 	if(status > 0) exit(status);
+}
+
+time_t get_time() {
+	struct timeval time;
+	memset(&time,0,sizeof(struct timeval));
+	if(gettimeofday(&time,NULL) < 0) return -1;
+	return time.tv_sec;
 }
