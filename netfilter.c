@@ -25,12 +25,12 @@ int main() {
 	char buf[4096];
 	
 	struct addr_policy *pol[ADDR_SIZE];
-	struct addr_policy *p;
-	char *conf_file = "./filter.conf";
-	int configured = get_lwrite(conf_file);
-	if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
+	int i;
+	char *addr = "192.168.1.69";
+	int configured = 0;//get_lwrite(conf_file);
+	if((def = read_net_policies(addr,81,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
 	
-	for(p = pol[0];p != NULL;p++) printf("%p \n",*p);
+	for(i = 0;pol[i] != NULL;i++) printf("%p \n",pol[i]);
 	return 0;
 	if((h = nfq_open()) == NULL) error(1,errno,"nfq_open");
 	if (nfq_unbind_pf(h,AF_INET) < 0) error(1,errno,"nfq_unbind_pf");
@@ -40,10 +40,10 @@ int main() {
 	if(nfq_set_mode(qh, NFQNL_COPY_PACKET, 0xffff) < 0) error(1,errno,"nfq_set_mode");
 	fd = nfq_fd(h);
 	while ((rv = recv(fd, buf, sizeof(buf), 0)) && rv >= 0) {
-		if(get_lwrite(conf_file) > configured) {
-			configured = get_lwrite(conf_file);
-			if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
-		}
+		// if(get_lwrite(conf_file) > configured) {
+			// configured = get_lwrite(conf_file);
+			// if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
+		// }
 		nfq_handle_packet(h, buf, rv);
 	}
 	if(nfq_close(h) < 0) error(1,errno,"nfq_close");
