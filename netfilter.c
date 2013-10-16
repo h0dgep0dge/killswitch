@@ -25,10 +25,13 @@ int main() {
 	char buf[4096];
 	
 	struct addr_policy *pol[ADDR_SIZE];
+	struct addr_policy *p;
 	char *conf_file = "./filter.conf";
 	int configured = get_lwrite(conf_file);
 	if((def = read_policies(conf_file,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
-
+	
+	for(p = pol[0];p != NULL;p++) printf("%p \n",*p);
+	return 0;
 	if((h = nfq_open()) == NULL) error(1,errno,"nfq_open");
 	if (nfq_unbind_pf(h,AF_INET) < 0) error(1,errno,"nfq_unbind_pf");
 	if (nfq_bind_pf(h,AF_INET) < 0) error(1,errno,"nfq_bind_pf");
