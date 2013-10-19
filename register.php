@@ -8,8 +8,14 @@ $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Add error de
 $addr = $_POST['addr'];
 $owner = '1'; // Get from session later
 $name = $_POST['name'];
-$policy = '0'; // Get deafult from database later
+$policy = '0';
 // No input sanitation, yet.
+
+$res = $sql->query('SELECT `policy` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\''); // Add error detection
+if($res->num_rows > 0) {
+	$row = $res->fetch_row();
+	$policy = $row[0];
+}
 
 $res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\''.$addr.'\''); // Add error detection
 if($res->num_rows > 0) die('Device already registered');
