@@ -1,12 +1,13 @@
 <?php
 include('creds.php'); // Includes my creds, so i don't need to post them on the internet.
+if(!isset($_POST['addr']) && !isset($_POST['name'])) header('Location: ./mac.html');
 if(!isset($_POST['addr']) || !isset($_POST['name'])) die('Server error');
 if($_POST['addr'] == "00:00:00:00:00:00") die('Invalid mac address');
 if(preg_match('/\A(?:[0-9a-fA-F]{2}:?){6}\z/',$_POST['addr']) <= 0) die('Invalid mac address');
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Add error detection
 $addr = $_POST['addr'];
-$owner = '1'; // Get from session later
+$owner = '1'; // Get from device config later
 $name = $_POST['name'];
 $policy = '0';
 // No input sanitation, yet.
