@@ -18,9 +18,8 @@ else if(!isset($_POST['username']) || !isset($_POST['password'])) {
 	die('A server error has occured');
 }
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Add error detection
-$username = $_POST['username'];
-$password = $_POST['password'];
-// Need input sanitation!
+$username = $sql->real_escape_string($_POST['username']);
+$password = $sql->real_escape_string($_POST['password']);
 
 $res = $sql->query('SELECT * FROM `users` WHERE `username`=\''.$username.'\''); // Add error detection
 if($res->num_rows <= 0) {

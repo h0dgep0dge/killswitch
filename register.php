@@ -4,13 +4,13 @@ if(!isset($_POST['addr']) && !isset($_POST['name']) && !isset($_POST['owner'])) 
 if(!isset($_POST['addr']) || !isset($_POST['name']) || !isset($_POST['owner'])) die('Server error');
 if($_POST['addr'] == "00:00:00:00:00:00") die('Invalid mac address');
 if(preg_match('/\A(?:[0-9a-fA-F]{2}:?){6}\z/',$_POST['addr']) <= 0) die('Invalid mac address');
+if(preg_match('/\A[0-9a-zA-Z \'"]{1,256}\z/m',$_POST['name']) <= 0) die('Name with bad characters');
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Add error detection
-$addr = $_POST['addr'];
-$owner = $_POST['owner'];
-$name = $_POST['name'];
-$policy = '0';
-// No input sanitation, yet.
+$addr = $sql->real_escape_string($_POST['addr']);
+$owner = $sql->real_escape_string($_POST['owner']);
+$name = $sql->real_escape_string($_POST['name']);
+$policy = '0'; // Default
 
 $res = $sql->query('SELECT `policy` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\''); // Add error detection
 if($res->num_rows > 0) {

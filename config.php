@@ -1,12 +1,4 @@
 <?php
-// <form method='post'>
-	// <table>
-		// <tr><td>Name</td><td>Allow / Deny</td></tr>
-		// <tr><td>Robbie</td><td><input type='radio' name='dev[0]' value='1' />/<input type='radio' name='dev[0]' value='0' /></td></tr>
-		// <tr><td>Default</td><td><input type='radio' name='dev[1]' value='1' />/<input type='radio' name='dev[1]' value='0' /></td></tr>
-	// </table>
-	// <input type='submit' value='Apply' />
-// </form>
 include('creds.php'); // Includes my creds, so i don't need to post them on the internet.
 session_start();
 if(!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == FALSE) {
@@ -25,9 +17,8 @@ if(isset($_POST['dev']) && isset($_POST['def'])) {
 	if($res->num_rows <= 0) die('User not found');
 	if($res->num_rows > 1) die('Server error');
 	$row = $res->fetch_row();
-	$owner = $row[0];
-	$def = $_POST['def'];
-	// sanitize
+	$owner = $sql->real_escape_string($row[0]);
+	$def = $sql->real_escape_string($_POST['def']);
 	
 	foreach($_POST['dev'] as $key => $val) {
 		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$val.'\' WHERE `id`=\''.$key.'\' AND `owner`=\''.$owner.'\'');
@@ -52,8 +43,7 @@ $res = $sql->query('SELECT `owner` FROM `users` WHERE `uid`=\''.$uid.'\'');
 if($res->num_rows <= 0) die('User not found');
 if($res->num_rows > 1) die('Server error');
 $row = $res->fetch_row();
-$owner = $row[0];
-//Sanitize.
+$owner = $sql->real_escape_string($row[0]);
 
 $def = 0;
 $def_id = -1;
