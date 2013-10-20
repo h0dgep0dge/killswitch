@@ -16,18 +16,38 @@ if(!isset($_SESSION['uid'])) {
 	die('Server error occured');
 }
 
+
+$sql = new mysqli('127.0.0.1',$username,$password,'killswitch');
+$uid = strval($_SESSION['uid']);
+
 if(isset($_POST['dev']) && isset($_POST['def'])) {
-	print_r($_POST);
+	$res = $sql->query('SELECT `owner` FROM `users` WHERE `uid`=\''.$uid.'\'');
+	if($res->num_rows <= 0) die('User not found');
+	if($res->num_rows > 1) die('Server error');
+	$row = $res->fetch_row();
+	$owner = $row[0];
+	$def = $_POST['def'];
+	// sanitize
+	
+	foreach($_POST['dev'] as $key => $val) {
+		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$val.'\' WHERE `id`=\''.$key.'\' AND `owner`=\''.$owner.'\'');
+	}
+	
+	$res = $sql->query('SELECT `id` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\'');
+	if($res->num_rows < 0) die('Server error');
+	else if($res->num_rows > 0) {
+		$row = $res->fetch_row();
+		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$def.'\' WHERE `id`=\''.$row[0].'\' AND `owner`=\''.$owner.'\'');
+	}
+	else {
+		$res = $sql->query('INSERT INTO `policies` VALUES (NULL, \''.$owner.'\', \'00:00:00:00:00:00\', \'DEFAULT\', \''.$def.'\')');
+		if($sql->affected_rows <= 0) die('Insert error occured');
+	}
 }
 else if(isset($_POST['dev']) || isset($_POST['def'])) {
 	die('Server error');
 }
-$sql = new mysqli('127.0.0.1',$username,$password,'killswitch');
 
-$uid = strval($_SESSION['uid']);
-// No input sanitation, yet.
-
-// echo '<form action=\'\' method=\'post\'>';
 $res = $sql->query('SELECT `owner` FROM `users` WHERE `uid`=\''.$uid.'\'');
 if($res->num_rows <= 0) die('User not found');
 if($res->num_rows > 1) die('Server error');
@@ -39,10 +59,10 @@ $def = 0;
 $def_id = -1;
 $res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\'');
 if($res->num_rows < 0) die('Server error');
-if($res->num_rows == 0) echo 'No devices registered';
 echo '<form method=\'post\'>';
 echo '<table>';
 echo '<tr><td>Name</td><td>Allow / Deny</td></tr>';
+if($res->num_rows == 0) echo 'No devices registered';
 for($i = 0;$i < $res->num_rows;$i++) {
 	$row = $res->fetch_row();
 	if($row[2] == "00:00:00:00:00:00") {

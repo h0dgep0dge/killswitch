@@ -5,11 +5,12 @@ var loaded = 0;
 function set_mac() {
 	if(loaded == 1) {
 		if(mac == "ERROR") {
-			document.getElementById('macaddr').value = "An error has occured 1";
+			document.getElementById('humanname').value = "An error has occured 1";
 			document.getElementById('humanname').disabled = true;
 			document.getElementById('submitbutton').disabled = true;
 		} else {
 			document.getElementById('macaddr').value = mac;
+			document.getElementById('owner').value = owner;
 		}
 	} else {
 		document.getElementById('macaddr').value = "An error has occured 2";
@@ -20,8 +21,9 @@ function set_mac() {
 </head>
 <body onLoad="set_mac()">
 <form action="register.php" method="post" id="registerform">
-Mac Address: <input type="text" id="macaddr" name="addr" onChange="set_mac()" /><br />
-Human readable name: <input type="text" id="humanname" name="name" /><br />
+Human readable name: <input type="text" id="humanname" name="name" />
+<input type="hidden" id="macaddr" name="addr" />
+<input type="hidden" id="owner" name="owner" />
 <input type="submit" id="submitbutton" value="Register" />
 </form>
 </body>
