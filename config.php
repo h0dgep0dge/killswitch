@@ -10,9 +10,7 @@ if(!isset($_SESSION['uid'])) {
 
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch');
-if ($sql->connect_error) {
-	die('Connect Error '.$sql->connect_error);
-}
+if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 
 $uid = strval($_SESSION['uid']);
 
@@ -26,17 +24,19 @@ if(isset($_POST['dev']) && isset($_POST['def'])) {
 	
 	foreach($_POST['dev'] as $key => $val) {
 		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$val.'\' WHERE `id`=\''.$key.'\' AND `owner`=\''.$owner.'\'');
+		if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 	}
 	
 	$res = $sql->query('SELECT `id` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\'');
-	if($res->num_rows < 0) die('Server error');
+	if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 	else if($res->num_rows > 0) {
 		$row = $res->fetch_row();
 		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$def.'\' WHERE `id`=\''.$row[0].'\' AND `owner`=\''.$owner.'\'');
+		if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 	}
 	else {
 		$res = $sql->query('INSERT INTO `policies` VALUES (NULL, \''.$owner.'\', \'00:00:00:00:00:00\', \'DEFAULT\', \''.$def.'\')');
-		if($sql->affected_rows <= 0) die('Insert error occured');
+		if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 	}
 }
 else if(isset($_POST['dev']) || isset($_POST['def'])) {
@@ -45,14 +45,14 @@ else if(isset($_POST['dev']) || isset($_POST['def'])) {
 
 $res = $sql->query('SELECT `owner` FROM `users` WHERE `uid`=\''.$uid.'\'');
 if($res->num_rows <= 0) die('User not found');
-if($res->num_rows > 1) die('Server error');
+if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 $row = $res->fetch_row();
 $owner = $sql->real_escape_string($row[0]);
 
 $def = 0;
 $def_id = -1;
 $res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\'');
-if($res->num_rows < 0) die('Server error');
+if($sql->connect_error) die('Connect Error '.$sql->connect_error);
 echo '<form method=\'post\'>';
 echo '<table>';
 echo '<tr><td>Name</td><td>Allow / Deny</td></tr>';
