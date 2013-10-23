@@ -10,6 +10,10 @@ if(!isset($_SESSION['uid'])) {
 
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch');
+if ($sql->connect_error) {
+	die('Connect Error '.$sql->connect_error);
+}
+
 $uid = strval($_SESSION['uid']);
 
 if(isset($_POST['dev']) && isset($_POST['def'])) {

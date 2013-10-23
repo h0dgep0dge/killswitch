@@ -7,6 +7,10 @@ if(preg_match('/\A(?:[0-9a-fA-F]{2}:?){6}\z/',$_POST['addr']) <= 0) die('Invalid
 if(preg_match('/\A[0-9a-zA-Z \'"]{1,256}\z/m',$_POST['name']) <= 0) die('Name with bad characters');
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Add error detection
+if ($sql->connect_error) {
+	die('Connect Error '.$sql->connect_error);
+}
+
 $addr = $sql->real_escape_string($_POST['addr']);
 $owner = $sql->real_escape_string($_POST['owner']);
 $name = $sql->real_escape_string($_POST['name']);
