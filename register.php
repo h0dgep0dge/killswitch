@@ -5,7 +5,7 @@ if(!isset($_POST['addr']) && !isset($_POST['name']) && !isset($_POST['owner'])) 
 	die('Redirecting.');
 }
 if(!isset($_POST['addr']) || !isset($_POST['name']) || !isset($_POST['owner'])) die('Server error'); // There are missing variables
-if($_POST['addr'] == "00:00:00:00:00:00") die('Invalid mac address'); // This is what the macaddr program returns when you give it a bad ip
+if($_POST['addr'] == "00:00:00:00:00:00") die('Invalid mac address'); // I don't know why you'd get this, but it's already being used for the default
 if(preg_match('/\A(?:[0-9a-fA-F]{2}:?){6}\z/',$_POST['addr']) <= 0) die('Invalid mac address'); // Mac address is mis-formatted
 if(preg_match('/\A[0-9a-zA-Z \'"]{1,256}\z/m',$_POST['name']) <= 0) die('Name with bad characters'); // Alias can only contain certain characters
 
