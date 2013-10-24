@@ -27,11 +27,13 @@ $owner = $sql->real_escape_string($row[0]);
 if(isset($_POST['dev']) && isset($_POST['def'])) { // Checks if there's entries to update
 	$def = $sql->real_escape_string($_POST['def']); // New default
 	
+	// Iterate over devices to update and update them
 	foreach($_POST['dev'] as $key => $val) {
 		$res = $sql->query('UPDATE `policies` SET `policy`=\''.$val.'\' WHERE `id`=\''.$key.'\' AND `owner`=\''.$owner.'\'');
 		if($sql->error) die('Update error'.$sql->error);
 	}
 	
+	// Create or update the deafult policy
 	$res = $sql->query('SELECT `id` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\'');
 	if($sql->error) die('Select Error '.$sql->error);
 	else if($res->num_rows > 0) {
@@ -47,13 +49,13 @@ if(isset($_POST['dev']) && isset($_POST['def'])) { // Checks if there's entries 
 
 $def = 0;
 $def_id = -1;
-$res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\'');
-if($sql->connect_error) die('Connect Error '.$sql->connect_error);
+$res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\''); // Get all current policies and display in a nice table
+if($sql->error) die('Select Error '.$sql->error);
 echo '<form method=\'post\'>';
 echo '<table>';
 echo '<tr><td>Name</td><td>Allow / Deny</td></tr>';
-if($res->num_rows == 0) echo 'No devices registered';
-for($i = 0;$i < $res->num_rows;$i++) {
+if($res->num_rows == 0) echo '<tr><td>No devices registered</td><td></td></tr>';
+else for($i = 0;$i < $res->num_rows;$i++) { // Iterate over current policies
 	$row = $res->fetch_row();
 	if($row[2] == "00:00:00:00:00:00") {
 		$def = intval($row[4]);
