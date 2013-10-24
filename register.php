@@ -15,7 +15,7 @@ $name = $sql->real_escape_string($_POST['name']);
 $policy = '0'; // Default
 
 $res = $sql->query('SELECT `policy` FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\'00:00:00:00:00:00\''); // Add error detection
-if($sql->connect_error) die('Connect Error '.$sql->connect_error);
+if($sql->error) die('Connect Error '.$sql->error);
 
 if($res->num_rows > 0) {
 	$row = $res->fetch_row();
@@ -23,10 +23,10 @@ if($res->num_rows > 0) {
 }
 
 $res = $sql->query('SELECT * FROM `policies` WHERE `owner`=\''.$owner.'\' AND `addr`=\''.$addr.'\''); // Add error detection
-if($sql->connect_error) die('Connect Error '.$sql->connect_error);
+if($sql->error) die('Connect Error '.$sql->error);
 if($res->num_rows > 0) die('Device already registered');
 
 $res = $sql->query('INSERT INTO `policies` VALUES (NULL, \''.$owner.'\', \''.$addr.'\', \''.$name.'\', \''.$policy.'\')');
-if($sql->connect_error) die('Connect Error '.$sql->connect_error);
+if($sql->error) die('Connect Error '.$sql->error);
 echo 'Device registered';
 ?>

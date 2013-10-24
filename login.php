@@ -24,7 +24,7 @@ $username = $sql->real_escape_string($_POST['username']);
 $password = $sql->real_escape_string($_POST['password']);
 
 $res = $sql->query('SELECT * FROM `users` WHERE `username`=\''.$username.'\''); // Add error detection
-if($sql->connect_error) die('Connect Error '.$sql->connect_error);
+if($sql->error) die('Connect Error '.$sql->error);
 if($res->num_rows <= 0) {
 	die('Username or password incorrect');
 }
