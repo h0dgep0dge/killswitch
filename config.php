@@ -67,4 +67,5 @@ echo '<tr><td>Default</td><td><input type=\'radio\' name=\'def\' value=\'1\' '.(
 echo '</table>';
 echo '<input type=\'submit\' value=\'Apply\' />';
 echo '</form>';
+echo '<a href=\'control.php\'>Go back</a> to control panel';
 ?>

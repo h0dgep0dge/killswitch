@@ -34,5 +34,6 @@ if($row[2] != sha1($password)) die('Username or password incorrect'); // Check p
 // Authenticated
 $_SESSION['logged_in'] = TRUE;
 $_SESSION['uid'] = intval($row[0]);
+header('Location: ./control.php');
 echo 'You\'re now logged in';
 ?>
