@@ -28,7 +28,7 @@ int main() {
 	
 	struct addr_policy *pol[ADDR_SIZE];
 	int i;
-	char *addr = "192.168.1.69";
+	char *addr = "121.99.154.79";
 	unsigned int configured;
 	
 	if((def = read_net_policies(addr,81,OWNER,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
