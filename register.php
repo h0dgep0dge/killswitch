@@ -7,7 +7,7 @@ if(!isset($_POST['addr']) && !isset($_POST['name']) && !isset($_POST['owner'])) 
 if(!isset($_POST['addr']) || !isset($_POST['name']) || !isset($_POST['owner'])) die('Server error'); // There are missing variables
 if($_POST['addr'] == "00:00:00:00:00:00") die('Invalid mac address'); // I don't know why you'd get this, but it's already being used for the default
 if(preg_match('/\A(?:[0-9a-fA-F]{2}:?){6}\z/',$_POST['addr']) <= 0) die('Invalid mac address'); // Mac address is mis-formatted
-if(preg_match('/\A[0-9a-zA-Z \'"]{1,256}\z/m',$_POST['name']) <= 0) die('Name with bad characters'); // Alias can only contain certain characters
+if(preg_match('/\A[0-9a-zA-Z \'",]{1,256}\z/m',$_POST['name']) <= 0) die('Name with bad characters'); // Alias can only contain certain characters
 
 $sql = new mysqli('127.0.0.1',$username,$password,'killswitch'); // Create sqli object
 if($sql->connect_error) die('Connect Error '.$sql->connect_error);

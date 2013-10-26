@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <error.h>
+#include <errno.h>
 #include "lib.h"
 
 #define ADDR_SIZE 1000
