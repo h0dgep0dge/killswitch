@@ -28,10 +28,10 @@ int main(int argc,char **argv) {
 	memcpy(&(request.arp_pa),&target,sizeof(struct sockaddr));
 	strcpy(request.arp_dev,"eth0");
 	if(ioctl(sock,SIOCGARP,&request) < 0) {
-		if(errno == 6) {
-			printf("ERROR\n");
-			return 1;
-		}
+		// if(errno == 6) {
+			// printf("ERROR\n");
+			// return 1;
+		// }
 		error(1,errno,"Ioctl %i",errno);
 	}
 	printf("%.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",(unsigned char)request.arp_ha.sa_data[0],(unsigned char)request.arp_ha.sa_data[1],
