@@ -10,7 +10,7 @@
 #include "lib.h"
 
 #define ADDR_SIZE 1000
-#define CONF_TIMEOUT 10
+#define CONF_TIMEOUT 30
 #define OWNER 1
 
 int cb(struct nfq_q_handle *qh,struct nfgenmsg *nfmsg,struct nfq_data *nfa,void *data);
@@ -42,11 +42,12 @@ int main() {
 	if(nfq_set_mode(qh, NFQNL_COPY_PACKET, 0xffff) < 0) error(1,errno,"nfq_set_mode");
 	fd = nfq_fd(h);
 	while ((rv = recv(fd, buf, sizeof(buf), 0)) && rv >= 0) {
-		if(get_time()+(CONF_TIMEOUT*60) <= configured) {
+		if(get_time()+(CONF_TIMEOUT) <= configured) {
 			printf("Reconfiguring\n");
 			if((def = read_net_policies(addr,81,OWNER,pol,ADDR_SIZE)) < 0) error(1,errno,"read_policies");
 			configured = get_time();
 		}
+		printf(".");
 		nfq_handle_packet(h, buf, rv);
 	}
 	if(nfq_close(h) < 0) error(1,errno,"nfq_close");
